@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>All Recipes</h1>
+  <ul>
+    {% for recipe in recipes %}
+      <li>
+        <a href="{% url 'recipe_detail' recipe.pk %}">
+          {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" width="150">
+          {% endif %}
+          <h3>{{ recipe.title }}</h3>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
