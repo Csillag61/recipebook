@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "recipes",  # Your recipes app
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "recipebook.urls"
+
+LOGIN_REDIRECT_URL = 'recipe_list'
+LOGOUT_REDIRECT_URL = 'recipe_list'
+
 
 TEMPLATES = [
     {

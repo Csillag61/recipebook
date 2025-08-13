@@ -1,10 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h1>New Recipe</h1>
+  <h2>Create a New Recipe</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    <div class="form-group">
+      {{ form.title.label_tag }} {{ form.title }}
+    </div>
+    <div class="form-group">
+      {{ form.description.label_tag }} {{ form.description }}
+    </div>
+    <div class="form-group">
+      {{ form.ingredients.label_tag }} {{ form.ingredients }}
+    </div>
+    <div class="form-group">
+      {{ form.instructions.label_tag }} {{ form.instructions }}
+    </div>
+    <div class="form-group">
+      {{ form.image.label_tag }} {{ form.image }}
+    </div>
+    <div class="form-group">
+      {{ form.category.label_tag }} {{ form.category }}
+    </div>
+    <div class="form-group">
+      {{ form.tags.label_tag }} {{ form.tags }}
+    </div>
     <button type="submit">Save Recipe</button>
   </form>
-  <a href="{% url 'recipe_list' %}">← Cancel</a>
 {% endblock %}
+

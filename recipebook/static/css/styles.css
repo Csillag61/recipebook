@@ -53,3 +53,30 @@ li {
     border-bottom: 1px solid #ddd;
     padding-bottom: 1em;
 }
+
+form {
+  max-width: 600px;
+  margin: auto;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+label {
+  font-weight: bold;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
