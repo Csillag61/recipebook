@@ -26,7 +26,12 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     title = models.CharField(max_length=100)
     story = models.TextField(help_text="Background or personal story behind the recipe")
-    cooking_time = models.PositiveIntegerField(help_text="Time in minutes")
+    cooking_time = models.PositiveIntegerField(help_text="Time")
+    COOKING_TIME_UNITS = [
+        ('min', 'Minutes'),
+        ('hr', 'Hours'),
+    ]
+    cooking_time_unit = models.CharField(max_length=3, choices=COOKING_TIME_UNITS, default='min')
     image = models.ImageField(upload_to="recipes/", null=True, blank=True)
 
     description = models.TextField(blank=True, null=True)

@@ -22,18 +22,19 @@ def recipe_detail(request, pk):
 
 @login_required
 def recipe_create(request):
+    RecipeIngredientFormSet = inlineformset_factory(
+        Recipe, RecipeIngredient, fields=('ingredient', 'quantity', 'unit'), extra=15, can_delete=True
+    )
     if request.method == "POST":
         form = RecipeForm(request.POST, request.FILES)
-        if form.is_valid():
+        formset = RecipeIngredientFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
             recipe = form.save(commit=False)
-            recipe.author = request.user
+            recipe.author = request.user  # Set the author field
             recipe.save()
-            form.save_m2m()  # Save ManyToMany fields like ingredients and tags
-            return redirect("recipe_list")
-        else:
-            # Form is invalid, show errors
-            formset = RecipeIngredientFormSet()
-            return render(request, "recipes/recipe_form.html", {"form": form, "formset": formset})
+            formset.instance = recipe
+            formset.save()
+            return redirect("recipe_detail", pk=recipe.pk)
     else:
         form = RecipeForm()
         formset = RecipeIngredientFormSet()
@@ -60,11 +61,3 @@ def profile(request, username):
         "recipes/profile.html",
         {"profile_user": profile_user, "recipes": recipes},
     )
-
-RecipeIngredientFormSet = inlineformset_factory(
-    Recipe,
-    RecipeIngredient,
-    form=RecipeIngredientForm,
-    extra=1,
-    can_delete=True
-)

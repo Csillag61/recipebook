@@ -10,6 +10,7 @@ class RecipeForm(forms.ModelForm):
             "story",
             "description",
             "cooking_time",
+            "cooking_time_unit",
             "instructions",
             "image",
             "category",
@@ -49,4 +50,5 @@ class RecipeForm(forms.ModelForm):
                     "data-placeholder": "Select or type tags",
                 }
             ),
+            "cooking_time_unit": forms.Select(attrs={"class": "form-control"}),
         }

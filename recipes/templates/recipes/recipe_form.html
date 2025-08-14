@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/styles.css' %}">
@@ -8,69 +9,38 @@
 {% block content %}
 <div class="container mt-4">
   <h2>Create Recipe</h2>
+
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {% if form.errors %}
-      <div class="alert alert-danger">
-        <ul>
-          {% for field in form.visible_fields %}
-            {% for error in field.errors %}
-              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-            {% endfor %}
-          {% endfor %}
-          {% for error in form.non_field_errors %}
-            <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
 
-    {% for field in form.visible_fields %}
-      <div class="mb-3">
-        {{ field.label_tag }}
-        {{ field }}
-        {{ field.errors }}
-      </div>
-    {% endfor %}
+    {{ form|crispy }}
+
+    <!-- Image preview (hidden by CSS class) -->
+    <img id="preview" class="image-preview d-none" src="#" alt="Image preview">
 
     <h4>Ingredients</h4>
     {{ formset.management_form }}
     <div id="ingredient-formset">
       {% for ingredient_form in formset %}
-        <div class="border p-3 mb-3 rounded ingredient-form">
+        <div class="border p-3 mb-3 rounded ingredient-form{% if forloop.counter > 1 %} d-none{% endif %}">
           {% for hidden in ingredient_form.hidden_fields %}
             {{ hidden }}
           {% endfor %}
           {% for field in ingredient_form.visible_fields %}
-            <div class="mb-3">
-              {{ field.label_tag }}
-              {{ field }}
-              {{ field.errors }}
-            </div>
+            {{ field|as_crispy_field }}
           {% endfor %}
-          {% if ingredient_form.can_delete %}
-            <div class="form-check mb-2">
-              {{ ingredient_form.DELETE }}
-              <label class="form-check-label" for="{{ ingredient_form.DELETE.id_for_label }}">Delete</label>
-            </div>
-          {% endif %}
         </div>
       {% endfor %}
     </div>
 
-    <div class="mb-3">
-      {{ form.image.label_tag }}
-      {{ form.image }}
-      <img id="preview" class="image-preview mt-2" src="#" alt="Image preview">
-    </div>
-
+    <button type="button" id="add-ingredient" class="btn btn-secondary">Add Ingredient</button>
     <button type="submit" class="btn btn-primary">Save Recipe</button>
   </form>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<!-- jQuery -->
+<!-- jQuery (ensure this loads before Select2) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- Select2 -->
@@ -79,21 +49,39 @@
 
 <script>
   // Image preview
-  document.querySelector('input[type="file"]').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const preview = document.getElementById('preview');
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = 'block';
+  document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+      fileInput.addEventListener('change', function (event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const preview = document.getElementById('preview');
+        if (!preview) return;
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('d-none');
+      });
     }
   });
 
-  // Tag autocomplete
-  $(document).ready(function() {
+  // Initialize Select2 on fields with class .select2 (ensure your form widget sets this class)
+  $(function () {
     $('.select2').select2({
-      placeholder: "Select or type tags",
+      placeholder: 'Select or type tags',
       tags: true,
       width: '100%'
+    });
+  });
+
+  // Show one ingredient row by default; reveal more on click
+  document.addEventListener('DOMContentLoaded', function () {
+    const addBtn = document.getElementById('add-ingredient');
+    const ingredientForms = document.querySelectorAll('.ingredient-form');
+    let visibleCount = 1;
+    addBtn.addEventListener('click', function () {
+      if (visibleCount < ingredientForms.length) {
+        ingredientForms[visibleCount].classList.remove('d-none');
+        visibleCount += 1;
+      }
     });
   });
 </script>

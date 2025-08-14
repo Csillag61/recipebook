@@ -64,13 +64,6 @@ form {
 label {
   font-weight: bold;
 }
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
 
 button {
   background-color: #4caf50;
@@ -84,12 +77,8 @@ button:hover {
 }
 
 .image-preview {
-  display: none;
   max-width: 300px;
   margin-top: 10px;
-}
-.form-group {
-  margin-bottom: 15px;
 }
 
 input,
@@ -113,4 +102,8 @@ select {
   height: auto;
   display: block;
   margin-bottom: 10px;
+}
+
+.d-none {
+  display: none !important;
 }
