@@ -1,4 +1,5 @@
 from pathlib import Path
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "recipes",
     "crispy_forms",
-    "crispy_bootstrap4",  # Your recipes app
+    "crispy_bootstrap5",  # Your recipes app
 ]
 
 MIDDLEWARE = [
@@ -38,8 +39,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "recipebook.urls"
 
-LOGIN_REDIRECT_URL = "recipe_list"
-LOGOUT_REDIRECT_URL = "recipe_list"
+LOGIN_REDIRECT_URL = "recipes:recipe_list"         # or: reverse_lazy("recipes:recipe_list")
+LOGOUT_REDIRECT_URL = "recipes:recipe_list"
+LOGIN_URL = "recipes:login"                        # optional, used by @login_required
 
 
 TEMPLATES = [
@@ -116,5 +118,5 @@ STATICFILES_DIRS = [BASE_DIR / "recipes" / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

@@ -1,11 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}{{ profile_user.username }} · Profile{% endblock %}
+
 {% block content %}
   <div class="d-flex justify-content-between align-items-center">
-    <h2>All Recipes</h2>
-    <a class="btn btn-primary" href="{% url 'recipes:recipe_create' %}">Add Recipe</a>
+    <div>
+      <h2>{{ profile_user.username }}</h2>
+      <p class="text-muted mb-0">
+        Joined {{ profile_user.date_joined|date:"M j, Y" }} • {{ recipes|length }} recipe{{ recipes|length|pluralize }}
+      </p>
+    </div>
+    {% if user.is_authenticated and user == profile_user %}
+      <a class="btn btn-primary" href="{% url 'recipes:recipe_create' %}">Add Recipe</a>
+    {% endif %}
   </div>
+
+  <hr>
 
   <ul class="recipe-list">
     {% for recipe in recipes %}
@@ -16,33 +27,23 @@
           {% else %}
             <img class="recipe-thumb" src="{% static 'img/placeholder.png' %}" alt="{{ recipe.title }}">
           {% endif %}
-          <h3>{{ recipe.title }}</h3>
+          <h3 class="h5 mt-2">{{ recipe.title }}</h3>
         </a>
-
-        <p class="muted">
+        <p class="muted mb-2">
           {% if recipe.cooking_time %}
             {{ recipe.cooking_time }}{% if recipe.cooking_time_unit %} {{ recipe.get_cooking_time_unit_display }}{% endif %}
           {% endif %}
           {% if recipe.category %} • {{ recipe.category.name }}{% endif %}
-          • by <a href="{% url 'recipes:profile' recipe.author.username %}">{{ recipe.author.username }}</a>
         </p>
-
-        {% with tags=recipe.tags.all %}
-          {% if tags %}
-            <p class="tags">
-              {% for tag in tags %}
-                <span class="tag">{{ tag.name }}</span>{% if not forloop.last %} {% endif %}
-              {% endfor %}
-            </p>
-          {% endif %}
-        {% endwith %}
-
-        {% if user.is_authenticated and user == recipe.author %}
-          <a class="btn btn-outline-primary" href="{% url 'recipes:recipe_update' recipe.pk %}">Edit</a>
+        {% if user.is_authenticated and user == profile_user %}
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'recipes:recipe_update' recipe.pk %}">Edit</a>
+          <a class="btn btn-sm btn-outline-danger" href="{% url 'recipes:recipe_delete' recipe.pk %}">Delete</a>
         {% endif %}
       </li>
     {% empty %}
       <li>No recipes yet.</li>
     {% endfor %}
   </ul>
+
+  <p><a class="btn btn-outline-secondary" href="{% url 'recipes:recipe_list' %}">Back to All Recipes</a></p>
 {% endblock %}

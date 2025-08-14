@@ -8,48 +8,76 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h2>Create Recipe</h2>
+  <h2>{% if form.instance.pk %}Edit Recipe{% else %}Create Recipe{% endif %}</h2>
 
-  <form method="post" enctype="multipart/form-data">
+  {# Error summary #}
+  {% if form.errors or formset.errors or formset.non_form_errors %}
+    <div class="alert alert-danger">
+      Please fix the errors below.
+      {% if formset.non_form_errors %}<div>{{ formset.non_form_errors }}</div>{% endif %}
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
 
     {{ form|crispy }}
 
-    <!-- Image preview (hidden by CSS class) -->
-    <img id="preview" class="image-preview d-none" src="#" alt="Image preview">
+    {% if form.instance.pk and form.instance.image %}
+      <div class="mb-3">
+        <img src="{{ form.instance.image.url }}" alt="{{ form.instance.title }}" class="image-preview">
+      </div>
+    {% endif %}
+
+    <img id="preview" class="image-preview d-none" src="#" alt="Image preview" aria-live="polite">
 
     <h4>Ingredients</h4>
+
     {{ formset.management_form }}
+
     <div id="ingredient-formset">
       {% for ingredient_form in formset %}
-        <div class="border p-3 mb-3 rounded ingredient-form{% if forloop.counter > 1 %} d-none{% endif %}">
-          {% for hidden in ingredient_form.hidden_fields %}
-            {{ hidden }}
-          {% endfor %}
+        {# Show existing rows; hide blank extras except the first extra #}
+        <div class="border p-3 mb-3 rounded ingredient-form{% if not ingredient_form.instance.pk and not forloop.first %} d-none{% endif %}">
+          {% for hidden in ingredient_form.hidden_fields %}{{ hidden }}{% endfor %}
           {% for field in ingredient_form.visible_fields %}
             {{ field|as_crispy_field }}
           {% endfor %}
+
+          {% if ingredient_form.errors %}
+            <div class="text-danger small">{{ ingredient_form.errors }}</div>
+          {% endif %}
+
+          {% if ingredient_form.can_delete %}
+            {{ ingredient_form.DELETE }}
+            <button type="button" class="btn btn-sm btn-outline-danger mt-2 ingredient-remove" data-action="remove">
+              Remove
+            </button>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
 
-    <button type="button" id="add-ingredient" class="btn btn-secondary">Add Ingredient</button>
-    <button type="submit" class="btn btn-primary">Save Recipe</button>
+    <div class="d-flex gap-2">
+      <button type="button" id="add-ingredient" class="btn btn-secondary">Add Ingredient</button>
+      <button type="submit" class="btn btn-primary">
+        {% if form.instance.pk %}Update{% else %}Save Recipe{% endif %}
+      </button>
+      {% if form.instance.pk %}
+        <a class="btn btn-outline-secondary" href="{% url 'recipes:recipe_detail' form.instance.pk %}">Cancel</a>
+        <a class="btn btn-outline-danger ms-auto" href="{% url 'recipes:recipe_delete' form.instance.pk %}">Delete…</a>
+      {% else %}
+        <a class="btn btn-outline-secondary" href="{% url 'recipes:recipe_list' %}">Cancel</a>
+      {% endif %}
+    </div>
   </form>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<!-- jQuery (ensure this loads before Select2) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <script>
-  // Image preview
   document.addEventListener('DOMContentLoaded', function () {
+    // Image preview for newly chosen file
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) {
       fileInput.addEventListener('change', function (event) {
@@ -61,27 +89,44 @@
         preview.classList.remove('d-none');
       });
     }
-  });
 
-  // Initialize Select2 on fields with class .select2 (ensure your form widget sets this class)
-  $(function () {
-    $('.select2').select2({
-      placeholder: 'Select or type tags',
-      tags: true,
-      width: '100%'
-    });
-  });
-
-  // Show one ingredient row by default; reveal more on click
-  document.addEventListener('DOMContentLoaded', function () {
+    // Add next hidden ingredient row
     const addBtn = document.getElementById('add-ingredient');
-    const ingredientForms = document.querySelectorAll('.ingredient-form');
-    let visibleCount = 1;
-    addBtn.addEventListener('click', function () {
-      if (visibleCount < ingredientForms.length) {
-        ingredientForms[visibleCount].classList.remove('d-none');
-        visibleCount += 1;
+    const container = document.getElementById('ingredient-formset');
+
+    function nextHiddenRow() {
+      return Array.from(container.querySelectorAll('.ingredient-form')).find(el => el.classList.contains('d-none'));
+    }
+
+    addBtn?.addEventListener('click', function () {
+      const row = nextHiddenRow();
+      if (row) {
+        row.classList.remove('d-none');
+      } else {
+        addBtn.setAttribute('disabled', 'disabled');
       }
+    });
+
+    // Remove (mark DELETE for existing; hide/clear for blank)
+    container.addEventListener('click', function (e) {
+      const btn = e.target.closest('button.ingredient-remove');
+      if (!btn) return;
+
+      const row = btn.closest('.ingredient-form');
+      if (!row) return;
+
+      const deleteInput = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+      if (deleteInput) {
+        deleteInput.checked = true;
+        row.classList.add('d-none');
+      } else {
+        row.querySelectorAll('input, select, textarea').forEach(el => {
+          if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+          else el.value = '';
+        });
+        row.classList.add('d-none');
+      }
+      addBtn?.removeAttribute('disabled');
     });
   });
 </script>

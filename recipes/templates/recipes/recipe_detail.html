@@ -1,17 +1,61 @@
 {% extends 'base.html' %}
+
 {% block content %}
   <h1>{{ recipe.title }}</h1>
+
+  {% if user.is_authenticated and recipe.author == user %}
+    <p><a class="btn btn-lg btn-outline-primary" href="{% url 'recipes:recipe_update' recipe.pk %}">Edit</a></p>
+  {% endif %}
+
   {% if recipe.image %}
     <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" width="300">
   {% endif %}
-  <p><strong>Story:</strong> {{ recipe.story }}</p>
+
+  {% if recipe.story %}
+    <p><strong>Story:</strong> {{ recipe.story }}</p>
+  {% endif %}
+
+  {% if recipe.cooking_time %}
+    <p>
+      <strong>Cooking time:</strong>
+      {{ recipe.cooking_time }}
+      {% if recipe.cooking_time_unit %}{{ recipe.get_cooking_time_unit_display }}{% endif %}
+    </p>
+  {% endif %}
+
+  {% if recipe.category %}
+    <p><strong>Category:</strong> {{ recipe.category }}</p>
+  {% endif %}
+
+  {% if recipe.tags.all %}
+    <p><strong>Tags:</strong>
+      {% for tag in recipe.tags.all %}
+        {{ tag.name }}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+  {% endif %}
+
   <h3>Ingredients</h3>
   <ul>
-    {% for ingredient in ingredients %}
-      <li>{{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}</li>
+    {% for ri in recipe.recipe_ingredients.all %}
+      <li>
+        {% if ri.quantity %}{{ ri.quantity }}{% endif %}
+        {% if ri.unit %} {{ ri.unit }}{% endif %}
+        {% if ri.ingredient %} {{ ri.ingredient.name }}{% endif %}
+      </li>
+    {% empty %}
+      <li>No ingredients added.</li>
     {% endfor %}
   </ul>
-  <h3>Instructions</h3>
-  <p>{{ recipe.instructions }}</p>
-  <a href="{% url 'recipe_list' %}">← Back to all recipes</a>
+
+  {% if recipe.description %}
+    <p><strong>Description:</strong> {{ recipe.description }}</p>
+  {% endif %}
+
+  {% if recipe.instructions %}
+    <h3>Instructions</h3>
+    <p>{{ recipe.instructions|linebreaksbr }}</p>
+  {% endif %}
+
+  <p><a href="{% url 'recipes:recipe_list' %}">← Back to all recipes</a></p>
 {% endblock %}
