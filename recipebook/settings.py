@@ -52,8 +52,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "recipebook.urls"
 
-LOGIN_REDIRECT_URL = 'recipe_list'
-LOGOUT_REDIRECT_URL = 'recipe_list'
+LOGIN_REDIRECT_URL = "recipe_list"
+LOGOUT_REDIRECT_URL = "recipe_list"
 
 
 TEMPLATES = [
@@ -123,6 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "recipes" / "static"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

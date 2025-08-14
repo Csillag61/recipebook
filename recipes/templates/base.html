@@ -1,9 +1,16 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Recipe App{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block head_meta %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Recipe App{% endblock %}</title>
+  {% endblock %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <header>
@@ -11,7 +18,10 @@
         {% if user.is_authenticated %}
             <p>Welcome, {{ user.username }} | <a href="{% url 'logout' %}">Logout</a></p>
         {% else %}
-            <p><a href="{% url 'login' %}">Login</a></p>
+            <p>
+                <a href="{% url 'login' %}">Login</a> |
+                <a href="{% url 'register' %}">Register</a>
+            </p>
         {% endif %}
         <nav>
             <a href="{% url 'recipe_create' %}">➕ Add Recipe</a>
@@ -20,6 +30,7 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+    {% block extra_js %}{% endblock %}
     <footer>
         <p>&copy; {{ now|date:"Y" }} Recipe App. Built with Django.</p>
     </footer>

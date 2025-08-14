@@ -1,13 +1,52 @@
 from django import forms
-from .models import Recipe
+from .models import Recipe, RecipeIngredient
+
 
 class RecipeForm(forms.ModelForm):
     class Meta:
         model = Recipe
-        fields = ['title', 'description', 'ingredients', 'instructions', 'image', 'category', 'tags']
+        fields = [
+            "title",
+            "story",
+            "description",
+            "cooking_time",
+            "instructions",
+            "image",
+            "category",
+            "tags",
+        ]
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'ingredients': forms.Textarea(attrs={'rows': 4}),
-            'instructions': forms.Textarea(attrs={'rows': 5}),
-            'tags': forms.CheckboxSelectMultiple(),  # if tags is a ManyToManyField
+            "title": forms.TextInput(
+                attrs={
+                    "placeholder": "Enter recipe title",
+                    "required": True,
+                    "class": "form-control",
+                }
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                    "required": True,
+                    "class": "form-control",
+                    "placeholder": "Short description of the recipe",
+                }
+            ),
+            "instructions": forms.Textarea(
+                attrs={
+                    "rows": 5,
+                    "required": True,
+                    "class": "form-control",
+                    "placeholder": "Step-by-step instructions",
+                }
+            ),
+            "image": forms.ClearableFileInput(
+                attrs={"class": "form-control-file", "accept": "image/*"}
+            ),
+            "category": forms.Select(attrs={"class": "form-control"}),
+            "tags": forms.SelectMultiple(
+                attrs={
+                    "class": "form-control select2",
+                    "data-placeholder": "Select or type tags",
+                }
+            ),
         }

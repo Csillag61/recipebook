@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Create Recipe</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        <ul>
+          {% for field in form.visible_fields %}
+            {% for error in field.errors %}
+              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% for field in form.visible_fields %}
+      <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+      </div>
+    {% endfor %}
+
+    <h4>Ingredients</h4>
+    {{ formset.management_form }}
+    <div id="ingredient-formset">
+      {% for ingredient_form in formset %}
+        <div class="border p-3 mb-3 rounded ingredient-form">
+          {% for hidden in ingredient_form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          {% for field in ingredient_form.visible_fields %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field }}
+              {{ field.errors }}
+            </div>
+          {% endfor %}
+          {% if ingredient_form.can_delete %}
+            <div class="form-check mb-2">
+              {{ ingredient_form.DELETE }}
+              <label class="form-check-label" for="{{ ingredient_form.DELETE.id_for_label }}">Delete</label>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.image.label_tag }}
+      {{ form.image }}
+      <img id="preview" class="image-preview mt-2" src="#" alt="Image preview">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Recipe</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  // Image preview
+  document.querySelector('input[type="file"]').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const preview = document.getElementById('preview');
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+    }
+  });
+
+  // Tag autocomplete
+  $(document).ready(function() {
+    $('.select2').select2({
+      placeholder: "Select or type tags",
+      tags: true,
+      width: '100%'
+    });
+  });
+</script>
+{% endblock %}
