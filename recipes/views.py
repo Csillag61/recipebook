@@ -31,18 +31,10 @@ def recipe_list(request):
             | Q(tags__name__icontains=q)
         ).distinct()
 
-    paginator = Paginator(qs, 12)  # 12 per page
+    paginator = Paginator(qs, 12)
     page_number = request.GET.get("page")
     recipes = paginator.get_page(page_number)
-
-    return render(
-        request,
-        "recipes/recipe_list.html",
-        {
-            "recipes": recipes,
-            "q": q,
-        },
-    )
+    return render(request, "recipes/recipe_list.html", {"recipes": recipes, "q": q})
 
 
 # Detail
@@ -74,13 +66,13 @@ def recipe_create(request):
     if request.method == "POST":
         form = RecipeForm(request.POST, request.FILES)
         temp_parent = Recipe(author=request.user)
-        formset = RecipeIngredientFormSet(request.POST, instance=temp_parent)
+        formset = RecipeIngredientFormSet(request.POST, instance=temp_parent, prefix="recipe_ingredients")
 
         if form.is_valid() and formset.is_valid():
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
-            form.save_m2m()  # save tags (ManyToMany)
+            form.save_m2m()
             formset.instance = recipe
             formset.save()
             messages.success(request, "Recipe created.")
@@ -88,7 +80,7 @@ def recipe_create(request):
         messages.error(request, "Please fix the errors below.")
     else:
         form = RecipeForm()
-        formset = RecipeIngredientFormSet()
+        formset = RecipeIngredientFormSet(prefix="recipe_ingredients")
 
     return render(request, "recipes/recipe_form.html", {"form": form, "formset": formset})
 
@@ -119,11 +111,7 @@ def profile(request, username):
     page_number = request.GET.get("page")
     recipes = paginator.get_page(page_number)
 
-    return render(
-        request,
-        "recipes/profile.html",
-        {"profile_user": profile_user, "recipes": recipes},
-    )
+    return render(request, "recipes/profile.html", {"profile_user": profile_user, "recipes": recipes})
 
 
 # Update
@@ -147,13 +135,13 @@ def recipe_update(request, pk):
 
     if request.method == "POST":
         form = RecipeForm(request.POST, request.FILES, instance=recipe)
-        formset = RecipeIngredientFormSet(request.POST, instance=recipe)
+        formset = RecipeIngredientFormSet(request.POST, instance=recipe, prefix="recipe_ingredients")
         if form.is_valid() and formset.is_valid():
             obj = form.save(commit=False)
             if not obj.author_id:
                 obj.author = request.user
             obj.save()
-            form.save_m2m()  # save tags changes
+            form.save_m2m()
             formset.instance = obj
             formset.save()
             messages.success(request, "Recipe updated.")
@@ -161,7 +149,7 @@ def recipe_update(request, pk):
         messages.error(request, "Please fix the errors below.")
     else:
         form = RecipeForm(instance=recipe)
-        formset = RecipeIngredientFormSet(instance=recipe)
+        formset = RecipeIngredientFormSet(instance=recipe, prefix="recipe_ingredients")
 
     return render(request, "recipes/recipe_form.html", {"form": form, "formset": formset})
 

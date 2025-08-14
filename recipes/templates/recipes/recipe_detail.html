@@ -37,7 +37,7 @@
 
   <h3>Ingredients</h3>
   <ul>
-    {% for ri in recipe.recipe_ingredients.all %}
+    {% for ri in recipe.recipeingredient_set.all %}
       <li>
         {% if ri.quantity %}{{ ri.quantity }}{% endif %}
         {% if ri.unit %} {{ ri.unit }}{% endif %}
