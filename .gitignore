@@ -43,5 +43,4 @@ dist/
 build/
 *.egg-info/
 .eggs/
-
-# Ignore
+**/management/commands/**

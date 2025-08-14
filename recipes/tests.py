@@ -100,7 +100,11 @@ class RecipeViewsTests(TestCase):
 
     def test_register_redirects_and_logs_in(self):
         url = reverse("recipes:register")
-        data = {"username": "charlie", "password1": "pass-Strong123", "password2": "pass-Strong123"}
+        data = {
+            "username": "charlie",
+            "password1": "pass-Strong123",
+            "password2": "pass-Strong123",
+        }
         resp = self.client.post(url, data, follow=False)
         self.assertEqual(resp.status_code, 302)
         self.assertIn(reverse("recipes:recipe_list"), resp["Location"])
@@ -210,11 +214,17 @@ class RecipeViewsTests(TestCase):
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "Please submit at least 1 form.")
-        self.assertTrue(RecipeIngredient.objects.filter(pk=self.existing_ri.pk).exists())
+        self.assertTrue(
+            RecipeIngredient.objects.filter(pk=self.existing_ri.pk).exists()
+        )
 
     def test_register_rejects_mismatched_passwords(self):
         url = reverse("recipes:register")
-        data = {"username": "eve", "password1": "StrongPass123", "password2": "Different123"}
+        data = {
+            "username": "eve",
+            "password1": "StrongPass123",
+            "password2": "Different123",
+        }
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)  # form re-rendered with errors
         self.assertFalse(User.objects.filter(username="eve").exists())
@@ -230,7 +240,11 @@ class RecipeViewsTests(TestCase):
 
     def test_register_rejects_common_password(self):
         url = reverse("recipes:register")
-        data = {"username": "erin", "password1": "password123", "password2": "password123"}
+        data = {
+            "username": "erin",
+            "password1": "password123",
+            "password2": "password123",
+        }
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(User.objects.filter(username="erin").exists())
@@ -246,10 +260,12 @@ class RecipeViewsTests(TestCase):
 
     def test_register_rejects_password_similar_to_username(self):
         url = reverse("recipes:register")
-        data = {"username": "george", "password1": "george123", "password2": "george123"}
+        data = {
+            "username": "george",
+            "password1": "george123",
+            "password2": "george123",
+        }
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(User.objects.filter(username="george").exists())
         self.assertContains(resp, "too similar")
-
-

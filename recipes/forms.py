@@ -28,25 +28,52 @@ class RecipeForm(forms.ModelForm):
             "cooking_time_unit": "Unit",
         }
         widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Enter recipe title", "class": "form-control"}),
-            "story": forms.Textarea(attrs={"rows": 2, "class": "form-control", "placeholder": "Short story (optional)"}),
+            "title": forms.TextInput(
+                attrs={"placeholder": "Enter recipe title", "class": "form-control"}
+            ),
+            "story": forms.Textarea(
+                attrs={
+                    "rows": 2,
+                    "class": "form-control",
+                    "placeholder": "Short story (optional)",
+                }
+            ),
             "description": forms.Textarea(
-                attrs={"rows": 3, "class": "form-control", "placeholder": "Short description of the recipe"}
+                attrs={
+                    "rows": 3,
+                    "class": "form-control",
+                    "placeholder": "Short description of the recipe",
+                }
             ),
             "instructions": forms.Textarea(
-                attrs={"rows": 6, "class": "form-control", "placeholder": "Step-by-step instructions"}
+                attrs={
+                    "rows": 6,
+                    "class": "form-control",
+                    "placeholder": "Step-by-step instructions",
+                }
             ),
-            "image": forms.ClearableFileInput(attrs={"class": "form-control-file", "accept": "image/*"}),
+            "image": forms.ClearableFileInput(
+                attrs={"class": "form-control-file", "accept": "image/*"}
+            ),
             "category": forms.Select(attrs={"class": "form-control"}),
-            "tags": forms.SelectMultiple(attrs={"class": "form-control select2", "data-placeholder": "Select or type tags"}),
-            "cooking_time": forms.NumberInput(attrs={"min": 0, "class": "form-control"}),
+            "tags": forms.SelectMultiple(
+                attrs={
+                    "class": "form-control select2",
+                    "data-placeholder": "Select or type tags",
+                }
+            ),
+            "cooking_time": forms.NumberInput(
+                attrs={"min": 0, "class": "form-control"}
+            ),
             "cooking_time_unit": forms.Select(attrs={"class": "form-control"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if "category" in self.fields and isinstance(self.fields["category"], ModelChoiceField):
+        if "category" in self.fields and isinstance(
+            self.fields["category"], ModelChoiceField
+        ):
             cat_field = cast(ModelChoiceField, self.fields["category"])
             cat_field.empty_label = "— Select category —"
 
@@ -88,9 +115,18 @@ class RecipeIngredientForm(forms.ModelForm):
         model = RecipeIngredient
         fields = ("ingredient", "quantity", "unit")
         widgets = {
-            "ingredient": forms.Select(attrs={"class": "form-control select2", "data-placeholder": "— Select ingredient —"}),
-            "quantity": forms.NumberInput(attrs={"step": "any", "min": 0, "class": "form-control"}),
-            "unit": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. g, ml, tsp"}),
+            "ingredient": forms.Select(
+                attrs={
+                    "class": "form-control select2",
+                    "data-placeholder": "— Select ingredient —",
+                }
+            ),
+            "quantity": forms.NumberInput(
+                attrs={"step": "any", "min": 0, "class": "form-control"}
+            ),
+            "unit": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "e.g. g, ml, tsp"}
+            ),
         }
 
 

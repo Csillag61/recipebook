@@ -37,10 +37,13 @@ class RecipeAdmin(admin.ModelAdmin):
     def image_preview(self, obj):
         if obj and getattr(obj, "image", None):
             try:
-                return format_html('<img src="{}" style="max-height:120px;" />', obj.image.url)
+                return format_html(
+                    '<img src="{}" style="max-height:120px;" />', obj.image.url
+                )
             except Exception:
                 return "-"
         return "-"
+
     image_preview.short_description = "Image preview"
 
 

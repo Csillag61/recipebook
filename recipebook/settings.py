@@ -39,9 +39,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "recipebook.urls"
 
-LOGIN_REDIRECT_URL = "recipes:recipe_list"         # or: reverse_lazy("recipes:recipe_list")
+LOGIN_REDIRECT_URL = "recipes:recipe_list"  # or: reverse_lazy("recipes:recipe_list")
 LOGOUT_REDIRECT_URL = "recipes:recipe_list"
-LOGIN_URL = "recipes:login"                        # optional, used by @login_required
+LOGIN_URL = "recipes:login"  # optional, used by @login_required
 
 
 TEMPLATES = [

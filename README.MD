@@ -45,6 +45,36 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+## Running Tests
+
+- CLI (run all tests):
+
+```powershell
+# from project root
+python manage.py test -v 2
+```
+
+- Keep the test DB between runs (faster):
+
+```powershell
+python manage.py test --keepdb -v 2
+```
+
+- Run a single test class or method:
+
+```powershell
+# whole test class
+python manage.py test recipes.tests.RecipeViewsTests
+
+# single test method
+python manage.py test recipes.tests.RecipeViewsTests.test_create_with_valid_formset_creates_recipe_and_ingredients
+```
+
+- VS Code Test Explorer:
+  1. Open Command Palette → “Python: Configure Tests”.
+  2. Choose “unittest”, then accept defaults.
+  3. Use the Testing sidebar to run/debug tests.
+
 ## Project Setup Notes
 
 - settings.py

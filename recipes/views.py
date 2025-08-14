@@ -66,7 +66,9 @@ def recipe_create(request):
     if request.method == "POST":
         form = RecipeForm(request.POST, request.FILES)
         temp_parent = Recipe(author=request.user)
-        formset = RecipeIngredientFormSet(request.POST, instance=temp_parent, prefix="recipe_ingredients")
+        formset = RecipeIngredientFormSet(
+            request.POST, instance=temp_parent, prefix="recipe_ingredients"
+        )
 
         if form.is_valid() and formset.is_valid():
             recipe = form.save(commit=False)
@@ -82,7 +84,9 @@ def recipe_create(request):
         form = RecipeForm()
         formset = RecipeIngredientFormSet(prefix="recipe_ingredients")
 
-    return render(request, "recipes/recipe_form.html", {"form": form, "formset": formset})
+    return render(
+        request, "recipes/recipe_form.html", {"form": form, "formset": formset}
+    )
 
 
 # Register
@@ -111,7 +115,11 @@ def profile(request, username):
     page_number = request.GET.get("page")
     recipes = paginator.get_page(page_number)
 
-    return render(request, "recipes/profile.html", {"profile_user": profile_user, "recipes": recipes})
+    return render(
+        request,
+        "recipes/profile.html",
+        {"profile_user": profile_user, "recipes": recipes},
+    )
 
 
 # Update
@@ -135,7 +143,9 @@ def recipe_update(request, pk):
 
     if request.method == "POST":
         form = RecipeForm(request.POST, request.FILES, instance=recipe)
-        formset = RecipeIngredientFormSet(request.POST, instance=recipe, prefix="recipe_ingredients")
+        formset = RecipeIngredientFormSet(
+            request.POST, instance=recipe, prefix="recipe_ingredients"
+        )
         if form.is_valid() and formset.is_valid():
             obj = form.save(commit=False)
             if not obj.author_id:
@@ -151,7 +161,9 @@ def recipe_update(request, pk):
         form = RecipeForm(instance=recipe)
         formset = RecipeIngredientFormSet(instance=recipe, prefix="recipe_ingredients")
 
-    return render(request, "recipes/recipe_form.html", {"form": form, "formset": formset})
+    return render(
+        request, "recipes/recipe_form.html", {"form": form, "formset": formset}
+    )
 
 
 # Delete

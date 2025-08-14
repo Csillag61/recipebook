@@ -20,9 +20,14 @@ class RecipeIngredientForm(forms.ModelForm):
         widgets = {
             # Select2 is initialized globally in base.html
             "ingredient": forms.Select(
-                attrs={"class": "form-control select2", "data-placeholder": "— Select ingredient —"}
+                attrs={
+                    "class": "form-control select2",
+                    "data-placeholder": "— Select ingredient —",
+                }
             ),
-            "quantity": forms.NumberInput(attrs={"class": "form-control", "step": "any", "min": 0}),
+            "quantity": forms.NumberInput(
+                attrs={"class": "form-control", "step": "any", "min": 0}
+            ),
             # Unit widget may be overridden in __init__ if not a ChoiceField
             "unit": forms.Select(attrs={"class": "form-control"}),
         }
@@ -31,7 +36,9 @@ class RecipeIngredientForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Better empty label for ingredient (if FK)
-        if "ingredient" in self.fields and isinstance(self.fields["ingredient"], ModelChoiceField):
+        if "ingredient" in self.fields and isinstance(
+            self.fields["ingredient"], ModelChoiceField
+        ):
             ing_field = cast(ModelChoiceField, self.fields["ingredient"])
             ing_field.empty_label = "— Select ingredient —"
 
