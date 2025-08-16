@@ -12,6 +12,7 @@ ENV/
 *.env
 .env
 .env.*
+!.env.sample
 
 # Django DB and media
 db.sqlite3
